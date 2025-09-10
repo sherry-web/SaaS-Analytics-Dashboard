@@ -1,149 +1,192 @@
 import React from 'react';
-import { 
-  BarChart as RechartsBarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  Legend
+import {
+  BarChart as RechartsBarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer
 } from 'recharts';
+import WidgetSettingsMenu from '../Dashboard/widgets/WidgetSettingsMenu';
+import HelpPopover from '../ui/HelpPopover';
+import type { WidgetSettings } from '../Dashboard/widgets/WidgetSettings';
 
-interface DataPoint {
+/**
+ * Data structure for bar chart items
+ */
+interface BarChartData {
   name: string;
   value: number;
-  secondary?: number;
-  [key: string]: any;
 }
 
+/**
+ * Props for the BarChart component
+ */
 interface BarChartProps {
-  data?: DataPoint[];
-  title?: string;
-  height?: number;
-  primaryKey?: string;
-  secondaryKey?: string;
-  primaryColor?: string;
-  secondaryColor?: string;
-  showGrid?: boolean;
-  showLegend?: boolean;
-  orientation?: 'vertical' | 'horizontal';
+  /** Title of the bar chart */
+  title: string;
+  /** Array of data points to display */
+  data: BarChartData[];
+  /** Current widget settings */
+  settings: WidgetSettings;
+  /** Callback when settings are changed */
+  onSettingsChange: (settings: WidgetSettings) => void;
+  /** Callback when export is requested */
+  onExport: (format: 'csv' | 'png') => void;
+  /** Additional CSS classes */
   className?: string;
 }
 
-// Default dummy data
-const defaultData: DataPoint[] = [
-  { name: 'Product A', value: 4000, secondary: 2400 },
-  { name: 'Product B', value: 3000, secondary: 1398 },
-  { name: 'Product C', value: 2000, secondary: 9800 },
-  { name: 'Product D', value: 2780, secondary: 3908 },
-  { name: 'Product E', value: 1890, secondary: 4800 },
-  { name: 'Product F', value: 2390, secondary: 3800 }
-];
-
+/**
+ * Bar chart component with configurable settings and export options
+ * Provides accessible data visualization with user customization
+ */
 const BarChart: React.FC<BarChartProps> = ({
-  data = defaultData,
-  title = 'Bar Chart',
-  height = 400,
-  primaryKey = 'value',
-  secondaryKey = 'secondary',
-  primaryColor = '#3B82F6',
-  secondaryColor = '#10B981',
-  showGrid = true,
-  showLegend = true,
-  orientation = 'vertical',
+  title,
+  data,
+  settings,
+  onSettingsChange,
+  onExport,
   className = ''
 }) => {
+  const handleExport = (format: 'csv' | 'png'): void => {
+    if (typeof onExport !== 'function') return;
+
+    if (format === 'csv') {
+      // Export data as CSV
+      const csvContent = [
+        'Name,Value',
+        ...data.map(item => `"${item.name}",${item.value}`)
+      ].join('\n');
+      
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${title.replace(/\s+/g, '_')}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } else if (format === 'png') {
+      // TODO: Implement PNG export using html2canvas or similar library
+      console.log('PNG export functionality not yet implemented');
+    }
+
+    onExport(format);
+  };
+
+  const getDensityClasses = (): string => {
+    return settings.density === 'compact' 
+      ? 'p-4' 
+      : 'p-6';
+  };
+
+  const isStacked = settings.chartType === 'stacked';
+  const isSmooth = settings.chartType === 'smooth';
+
+  if (!data || data.length === 0) {
+    return (
+      <div 
+        className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 ${getDensityClasses()} ${className}`}
+        role="group"
+        aria-labelledby={`bar-chart-title-${title.replace(/\s+/g, '-')}`}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h3 
+            id={`bar-chart-title-${title.replace(/\s+/g, '-')}`}
+            className="text-lg font-semibold text-gray-900 dark:text-white"
+          >
+            {title}
+          </h3>
+          <div className="flex items-center space-x-2">
+            <HelpPopover 
+              title="How to Read Bar Charts"
+              content="Bar charts display categorical data with rectangular bars. The height of each bar represents the value for that category. Compare bars to understand relative magnitudes across different categories."
+            />
+            <WidgetSettingsMenu
+              widgetType="barchart"
+              currentSettings={settings}
+              onSettingsChange={onSettingsChange}
+              onExport={handleExport}
+            />
+          </div>
+        </div>
+        <div className="flex items-center justify-center h-48 text-gray-500 dark:text-gray-400">
+          No data available
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div 
-      className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 
-                 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200 ${className}`}
-      role="img"
-      aria-label={`${title} - Bar chart showing comparative data`}
+      className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 ${getDensityClasses()} ${className}`}
+      role="group"
+      aria-labelledby={`bar-chart-title-${title.replace(/\s+/g, '-')}`}
     >
-      {/* Chart Title */}
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+      <div className="flex items-center justify-between mb-4">
+        <h3 
+          id={`bar-chart-title-${title.replace(/\s+/g, '-')}`}
+          className="text-lg font-semibold text-gray-900 dark:text-white"
+        >
           {title}
         </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          Comparing values across categories
-        </p>
+        <div className="flex items-center space-x-2">
+          <HelpPopover 
+            title="How to Read Bar Charts"
+            content="Bar charts display categorical data with rectangular bars. The height of each bar represents the value for that category. Compare bars to understand relative magnitudes across different categories."
+          />
+          <WidgetSettingsMenu
+            widgetType="barchart"
+            currentSettings={settings}
+            onSettingsChange={onSettingsChange}
+            onExport={handleExport}
+          />
+        </div>
       </div>
 
-      {/* Chart Container */}
-      <div style={{ width: '100%', height }}>
+      <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <RechartsBarChart
             data={data}
-            layout={orientation === 'horizontal' ? 'horizontal' : 'vertical'}
             margin={{
               top: 5,
               right: 30,
-              left: orientation === 'horizontal' ? 50 : 20,
-              bottom: 5,
+              left: 20,
+              bottom: 5
             }}
+            aria-label={`Bar chart showing ${title}`}
           >
-            {showGrid && (
-              <CartesianGrid 
-                strokeDasharray="3 3" 
-                className="opacity-30"
-                stroke="currentColor"
-              />
-            )}
-            
+            <CartesianGrid 
+              strokeDasharray="3 3" 
+              className="stroke-gray-200 dark:stroke-gray-600" 
+            />
             <XAxis 
-              type={orientation === 'horizontal' ? 'number' : 'category'}
-              dataKey={orientation === 'horizontal' ? undefined : 'name'}
-              axisLine={false}
-              tickLine={false}
-              tick={{ fontSize: 12 }}
-              className="text-gray-600 dark:text-gray-400"
+              dataKey="name" 
+              className="text-xs text-gray-600 dark:text-gray-400"
             />
-            
-            <YAxis
-              type={orientation === 'horizontal' ? 'category' : 'number'}
-              dataKey={orientation === 'horizontal' ? 'name' : undefined}
-              axisLine={false}
-              tickLine={false}
-              tick={{ fontSize: 12 }}
-              className="text-gray-600 dark:text-gray-400"
-              width={orientation === 'horizontal' ? 80 : undefined}
+            <YAxis 
+              className="text-xs text-gray-600 dark:text-gray-400"
             />
-            
-            <Tooltip
+            <Tooltip 
               contentStyle={{
-                backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                border: '1px solid #e5e7eb',
-                borderRadius: '8px',
-                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                backgroundColor: 'white',
+                borderColor: '#e5e7eb',
+                borderRadius: '0.375rem',
+                color: '#374151'
               }}
-              labelStyle={{ color: '#374151' }}
+              itemStyle={{ color: '#374151' }}
             />
-            
-            {showLegend && (
-              <Legend 
-                wrapperStyle={{ paddingTop: '20px' }}
-              />
-            )}
-            
-            <Bar
-              dataKey={primaryKey}
-              fill={primaryColor}
-              name="Primary"
-              radius={[4, 4, 0, 0]}
-              animationDuration={1000}
+            <Bar 
+              dataKey="value" 
+              fill={settings.colorScheme === 'blue' ? '#3b82f6' :
+                    settings.colorScheme === 'green' ? '#10b981' :
+                    settings.colorScheme === 'purple' ? '#8b5cf6' : '#3b82f6'}
+              radius={isSmooth ? [4, 4, 0, 0] : [0, 0, 0, 0]}
+              stackId={isStacked ? 'stack' : undefined}
             />
-            
-            {data.some(item => item[secondaryKey] !== undefined) && (
-              <Bar
-                dataKey={secondaryKey}
-                fill={secondaryColor}
-                name="Secondary"
-                radius={[4, 4, 0, 0]}
-                animationDuration={1000}
-              />
-            )}
           </RechartsBarChart>
         </ResponsiveContainer>
       </div>

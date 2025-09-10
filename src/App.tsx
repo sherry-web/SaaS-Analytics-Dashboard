@@ -1,13 +1,27 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
-import './App.css';
+import Login from './pages/Login';
+import PublicLayout from './components/layout/PublicLayout';
+import PrivateLayout from './components/layout/PrivateLayout';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <Dashboard />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/login" element={
+          <PublicLayout>
+            <Login />
+          </PublicLayout>
+        } />
+        <Route path="/*" element={
+          <PrivateLayout>
+            <Dashboard />
+          </PrivateLayout>
+        } />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;

@@ -13,6 +13,9 @@ interface InputProps {
   disabled?: boolean;
   fullWidth?: boolean;
   icon?: 'search' | 'email' | 'user';
+  min?: number;
+  max?: number;
+  step?: number;
   onChange?: (value: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -61,6 +64,9 @@ export const Input: React.FC<InputProps> = ({
   disabled = false,
   fullWidth = false,
   icon,
+  min,
+  max,
+  step,
   onChange,
   onFocus,
   onBlur,
@@ -147,6 +153,9 @@ export const Input: React.FC<InputProps> = ({
           placeholder={placeholder}
           required={required}
           disabled={disabled}
+          min={min}
+          max={max}
+          step={step}
           className={inputClasses}
           onChange={(e) => onChange?.(e.target.value)}
           onFocus={onFocus}
@@ -180,205 +189,4 @@ export const Input: React.FC<InputProps> = ({
   );
 };
 
-// Demo Component
-export default function InputDemo() {
-  const [darkMode, setDarkMode] = React.useState(false);
-  const [formData, setFormData] = React.useState({
-    search: '',
-    email: '',
-    password: '',
-    username: '',
-    errorField: 'invalid@',
-  });
-
-  const handleInputChange = (field: string) => (value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  return (
-    <div className={darkMode ? 'dark' : ''}>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8 transition-colors">
-        <div className="max-w-4xl mx-auto space-y-8">
-          {/* Header */}
-          <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Input Component Demo
-            </h1>
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white"
-            >
-              {darkMode ? '☀️' : '🌙'}
-            </button>
-          </div>
-
-          {/* Basic Inputs */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                Basic Inputs
-              </h2>
-              
-              <Input
-                label="Search"
-                placeholder="Search dashboard..."
-                icon="search"
-                value={formData.search}
-                onChange={handleInputChange('search')}
-              />
-
-              <Input
-                label="Email Address"
-                type="email"
-                placeholder="user@example.com"
-                icon="email"
-                value={formData.email}
-                onChange={handleInputChange('email')}
-                helperText="We'll never share your email."
-              />
-
-              <Input
-                label="Password"
-                type="password"
-                placeholder="Enter password"
-                required
-                value={formData.password}
-                onChange={handleInputChange('password')}
-              />
-
-              <Input
-                label="Username"
-                placeholder="Choose a username"
-                icon="user"
-                value={formData.username}
-                onChange={handleInputChange('username')}
-                fullWidth
-              />
-            </div>
-
-            <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                States & Variants
-              </h2>
-
-              <Input
-                label="Error State"
-                placeholder="Invalid input"
-                value={formData.errorField}
-                onChange={handleInputChange('errorField')}
-                error="Please enter a valid email address."
-              />
-
-              <Input
-                label="Disabled Input"
-                placeholder="This field is disabled"
-                disabled
-                value="Read-only value"
-              />
-
-              <Input
-                placeholder="Input without label"
-                icon="search"
-                value=""
-                onChange={() => {}}
-              />
-
-              <Input
-                label="Required Field"
-                placeholder="This field is required"
-                required
-                helperText="Please fill out this field."
-              />
-            </div>
-          </div>
-
-          {/* Dashboard Context Examples */}
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-              Dashboard Context Examples
-            </h2>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Search Panel */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                  Search & Filter
-                </h3>
-                <div className="space-y-4">
-                  <Input
-                    placeholder="Search data..."
-                    icon="search"
-                    fullWidth
-                  />
-                  <Input
-                    label="Date Range"
-                    type="text"
-                    placeholder="Select date range"
-                    fullWidth
-                  />
-                </div>
-              </div>
-
-              {/* User Settings */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                  User Settings
-                </h3>
-                <div className="space-y-4">
-                  <Input
-                    label="Display Name"
-                    placeholder="Enter display name"
-                    icon="user"
-                    fullWidth
-                  />
-                  <Input
-                    label="Email Notifications"
-                    type="email"
-                    placeholder="notifications@example.com"
-                    icon="email"
-                    fullWidth
-                  />
-                </div>
-              </div>
-
-              {/* Data Export */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                  Export Options
-                </h3>
-                <div className="space-y-4">
-                  <Input
-                    label="File Name"
-                    placeholder="dashboard-export"
-                    fullWidth
-                  />
-                  <Input
-                    label="Max Records"
-                    type="number"
-                    placeholder="1000"
-                    fullWidth
-                    helperText="Leave empty for all records"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Accessibility Note */}
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-            <h3 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
-              Accessibility Features
-            </h3>
-            <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-              <li>• Proper label association and ARIA attributes</li>
-              <li>• Error announcement for screen readers</li>
-              <li>• Focus indicators with proper contrast</li>
-              <li>• Required field indicators</li>
-              <li>• Helper text and error message support</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+export default Input;
