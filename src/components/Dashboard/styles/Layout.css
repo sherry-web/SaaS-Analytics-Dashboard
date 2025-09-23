@@ -1,0 +1,302 @@
+/* ==========================================================================
+   SaaS Analytics Dashboard - Layout Components
+   ========================================================================== */
+
+/* Private Layout Styles */
+.private-layout {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  transition: background 0.3s ease;
+}
+
+.dark .private-layout {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+.private-content-wrapper {
+  min-height: calc(100vh - var(--top-nav-height, 64px) - var(--content-spacing, 2rem));
+  padding: var(--content-spacing, 2rem) 0;
+}
+
+/* Public Layout Styles */
+.public-layout {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  display: flex;
+  flex-direction: column;
+  transition: background 0.3s ease;
+}
+
+.dark .public-layout {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+.public-layout-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.dark .public-layout-header {
+  background: rgba(31, 41, 55, 0.95);
+  border-bottom-color: #374151;
+}
+
+.public-content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--public-content-padding, 2rem 1rem);
+  width: 100%;
+}
+
+.public-content-container {
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--public-container-padding, 0 1rem);
+}
+
+/* Max Width Variants */
+.max-width-sm .public-content-container {
+  max-width: 400px;
+}
+
+.max-width-md .public-content-container {
+  max-width: 500px;
+}
+
+.max-width-lg .public-content-container {
+  max-width: 600px;
+}
+
+.max-width-xl .public-content-container {
+  max-width: 800px;
+}
+
+.max-width-full .public-content-container {
+  max-width: 100%;
+}
+
+/* Alignment Variants */
+.align-center {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.align-start {
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.align-end {
+  justify-content: flex-end;
+  align-items: flex-end;
+  text-align: right;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .private-content-wrapper {
+    padding: 1rem 0;
+    min-height: calc(100vh - var(--top-nav-height, 56px) - 1rem);
+  }
+
+  .public-content-wrapper {
+    padding: 1.5rem 0.5rem;
+  }
+
+  .public-content-container {
+    padding: 0 0.5rem;
+  }
+
+  .max-width-sm .public-content-container,
+  .max-width-md .public-content-container,
+  .max-width-lg .public-content-container,
+  .max-width-xl .public-content-container {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .public-content-wrapper {
+    padding: 2.5rem 1.5rem;
+  }
+
+  .public-content-container {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  .public-content-wrapper {
+    padding: 3rem 2rem;
+  }
+
+  .public-content-container {
+    padding: 0 2rem;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .public-layout-header {
+    border-bottom-width: 2px;
+  }
+
+  .private-layout,
+  .public-layout {
+    background: white;
+    background-image: none !important;
+  }
+
+  .dark .private-layout,
+  .dark .public-layout {
+    background: black;
+    background-image: none !important;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .private-layout,
+  .public-layout {
+    transition: none;
+  }
+}
+
+/* Focus Management */
+.private-layout:focus-within,
+.public-layout:focus-within {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+}
+
+/* Print Styles */
+@media print {
+  .private-layout,
+  .public-layout {
+    background: white !important;
+    background-image: none !important;
+  }
+
+  .public-layout-header {
+    display: none !important;
+  }
+
+  .public-content-wrapper {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .public-content-container {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+}
+
+/* CSS Custom Properties for Layout Consistency */
+:root {
+  --top-nav-height: 64px;
+  --content-spacing: 2rem;
+  --public-content-padding: 2rem 1rem;
+  --public-container-padding: 0 1rem;
+  --private-content-padding: 2rem 0;
+  --transition-duration: 0.3s;
+}
+
+/* Ensure proper stacking context */
+.private-layout,
+.public-layout {
+  isolation: isolate;
+}
+
+/* Loading States */
+.private-layout.loading,
+.public-layout.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.private-layout.loading::after,
+.public-layout.loading::after {
+  content: "";
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e5e7eb;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+.dark .private-layout.loading::after,
+.dark .public-layout.loading::after {
+  border: 3px solid #374151;
+  border-top: 3px solid #3b82f6;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Error State Styles */
+.private-layout.error,
+.public-layout.error {
+  background: #fef2f2;
+}
+
+.dark .private-layout.error,
+.dark .public-layout.error {
+  background: #1f2937;
+}
+
+/* Success State Styles */
+.private-layout.success,
+.public-layout.success {
+  background: #f0fdf4;
+}
+
+.dark .private-layout.success,
+.dark .public-layout.success {
+  background: #1f2937;
+}
+
+/* Accessibility: Ensure sufficient contrast for text */
+.private-layout,
+.public-layout {
+  color: #374151;
+}
+
+.dark .private-layout,
+.dark .public-layout {
+  color: #d1d5db;
+}
+
+/* Focus visible polyfill support */
+.js-focus-visible .private-layout :focus:not(.focus-visible),
+.js-focus-visible .public-layout :focus:not(.focus-visible) {
+  outline: none;
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .private-content-wrapper,
+  .public-content-wrapper {
+    padding-bottom: env(safe-area-inset-bottom, 2rem);
+  }
+
+  .public-layout-header {
+    padding-top: env(safe-area-inset-top, 0);
+  }
+}

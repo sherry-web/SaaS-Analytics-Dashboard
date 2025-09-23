@@ -1,0 +1,426 @@
+/* ==========================================================================
+   SaaS Analytics Dashboard - Layout System
+   ========================================================================== */
+
+:root {
+  /* Spacing scale (rem-based) */
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  
+  /* Border radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* Transitions */
+  --transition-fast: 150ms ease-in-out;
+  --transition-normal: 250ms ease-in-out;
+  --transition-slow: 350ms ease-in-out;
+  
+  /* Z-index layers */
+  --z-sidebar: 40;
+  --z-navbar: 50;
+  --z-modal: 100;
+  --z-tooltip: 200;
+}
+
+/* ==========================================================================
+   Base Layout Grid System
+   ========================================================================== */
+
+.dashboard-container {
+  display: grid;
+  grid-template-areas:
+    "sidebar main"
+    "sidebar main";
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+  background-color: #f9fafb; /* Light mode fallback */
+}
+
+.dashboard-sidebar {
+  grid-area: sidebar;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: var(--z-sidebar);
+  transition: transform var(--transition-normal);
+}
+
+.dashboard-main {
+  grid-area: main;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* Prevent flex overflow */
+}
+
+.dashboard-navbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-navbar);
+}
+
+.dashboard-content {
+  flex: 1;
+  padding: var(--space-6);
+  overflow-x: hidden;
+}
+
+/* ==========================================================================
+   Responsive Grid Layout
+   ========================================================================== */
+
+.dashboard-grid {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  align-items: start;
+}
+
+/* Mobile First: Single Column */
+.dashboard-grid {
+  grid-template-columns: 1fr;
+}
+
+/* Tablet: 2 Columns */
+@media (min-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .dashboard-grid .widget-span-2 {
+    grid-column: span 2;
+  }
+}
+
+/* Desktop: 3-4 Columns */
+@media (min-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .dashboard-grid .widget-span-2 {
+    grid-column: span 2;
+  }
+  
+  .dashboard-grid .widget-span-3 {
+    grid-column: span 3;
+  }
+}
+
+/* Large Desktop: 4 Columns */
+@media (min-width: 1440px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ==========================================================================
+   Widget Card Styling
+   ========================================================================== */
+
+.widget-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+  overflow: hidden;
+}
+
+.widget-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.widget-card:focus-within {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.widget-header {
+  padding: var(--space-6) var(--space-6) 0;
+  margin-bottom: var(--space-4);
+}
+
+.widget-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #111827;
+  margin: 0;
+}
+
+.widget-subtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: var(--space-1);
+}
+
+.widget-body {
+  padding: 0 var(--space-6) var(--space-6);
+}
+
+.widget-actions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  margin-top: var(--space-4);
+}
+
+/* ==========================================================================
+   Sidebar & Navigation Integration
+   ========================================================================== */
+
+.sidebar-collapsed .dashboard-sidebar {
+  transform: translateX(-100%);
+}
+
+.sidebar-expanded .dashboard-sidebar {
+  transform: translateX(0);
+}
+
+/* Ensure navbar and sidebar work together */
+.dashboard-navbar {
+  margin-left: 0;
+  transition: margin-left var(--transition-normal);
+}
+
+.sidebar-expanded .dashboard-navbar {
+  margin-left: 16rem; /* Match sidebar width */
+}
+
+/* ==========================================================================
+   Responsive Behavior
+   ========================================================================== */
+
+/* Mobile: Stack sidebar and main content */
+@media (max-width: 767px) {
+  .dashboard-container {
+    grid-template-areas:
+      "navbar"
+      "main";
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    z-index: var(--z-modal);
+  }
+  
+  .dashboard-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+  
+  .dashboard-content {
+    padding: var(--space-4);
+  }
+  
+  .dashboard-grid {
+    gap: var(--space-4);
+  }
+}
+
+/* Tablet: Adjust spacing */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .dashboard-content {
+    padding: var(--space-5);
+  }
+  
+  .widget-header {
+    padding: var(--space-5) var(--space-5) 0;
+  }
+  
+  .widget-body {
+    padding: 0 var(--space-5) var(--space-5);
+  }
+}
+
+/* ==========================================================================
+   Animation & Transitions
+   ========================================================================== */
+
+.widget-card {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sidebar-transition {
+  transition: transform var(--transition-normal), margin-left var(--transition-normal);
+}
+
+.widget-transition {
+  transition: all var(--transition-fast);
+}
+
+/* ==========================================================================
+   Accessibility Enhancements
+   ========================================================================== */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .widget-card {
+    border-width: 2px;
+  }
+  
+  .widget-card:focus-within {
+    outline-width: 3px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0ms;
+    --transition-normal: 0ms;
+    --transition-slow: 0ms;
+  }
+  
+  .widget-card {
+    animation: none;
+  }
+}
+
+/* Focus visibility for keyboard users */
+.widget-card:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Dark Theme Support
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  .dashboard-container {
+    background-color: #111827;
+  }
+  
+  .widget-card {
+    background: #1f2937;
+    border-color: #374151;
+    box-shadow: var(--shadow-md);
+  }
+  
+  .widget-title {
+    color: #f9fafb;
+  }
+  
+  .widget-subtitle {
+    color: #d1d5db;
+  }
+}
+
+/* Force dark theme when .dark class is present */
+.dark .dashboard-container {
+  background-color: #111827;
+}
+
+.dark .widget-card {
+  background: #1f2937;
+  border-color: #374151;
+  box-shadow: var(--shadow-md);
+}
+
+.dark .widget-title {
+  color: #f9fafb;
+}
+
+.dark .widget-subtitle {
+  color: #d1d5db;
+}
+
+/* ==========================================================================
+   Utility Classes
+   ========================================================================== */
+
+.widget-full-height {
+  height: 100%;
+  min-height: 300px;
+}
+
+.widget-auto-height {
+  height: auto;
+}
+
+.widget-min-height {
+  min-height: 200px;
+}
+
+.widget-scrollable {
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+/* Loading states */
+.widget-loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.widget-loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+  .dashboard-sidebar,
+  .dashboard-navbar,
+  .widget-actions {
+    display: none !important;
+  }
+  
+  .dashboard-container {
+    grid-template-areas: "main";
+    grid-template-columns: 1fr;
+  }
+  
+  .widget-card {
+    box-shadow: none;
+    border: 1px solid #000;
+    page-break-inside: avoid;
+  }
+}

@@ -1,0 +1,380 @@
+/* ==========================================================================
+   SaaS Analytics Dashboard - Main Layout Grid
+   ========================================================================== */
+
+.main-layout-grid {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "sidebar main overlay";
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+  background-color: #f9fafb;
+  transition: grid-template-columns 0.3s ease;
+}
+
+.dark .main-layout-grid {
+  background-color: #111827;
+}
+
+/* Header Styles */
+.main-layout-header {
+  grid-area: header;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.dark .main-layout-header {
+  background: rgba(31, 41, 55, 0.95);
+  border-bottom-color: #374151;
+}
+
+/* Sidebar Styles */
+.main-layout-sidebar {
+  grid-area: sidebar;
+  position: sticky;
+  top: var(--top-nav-height, 64px);
+  height: calc(100vh - var(--top-nav-height, 64px));
+  background: white;
+  border-right: 1px solid #e5e7eb;
+  transition: transform 0.3s ease, width 0.3s ease;
+  z-index: 40;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.dark .main-layout-sidebar {
+  background: #1f2937;
+  border-right-color: #374151;
+}
+
+/* Sidebar Collapsed State */
+.main-layout-grid.sidebar-collapsed .main-layout-sidebar {
+  width: 64px;
+}
+
+/* Main Content Styles */
+.main-layout-content {
+  grid-area: main;
+  min-width: 0; /* Prevent grid blowout */
+  padding-top: var(--content-padding-top, 1rem);
+  padding-bottom: var(--content-padding-bottom, 2rem);
+}
+
+.main-content-container {
+  max-width: var(--content-max-width, 100%);
+  margin: 0 auto;
+  padding: 0 var(--content-padding-x, 1.5rem);
+  height: 100%;
+}
+
+/* Overlay Styles */
+.main-layout-overlay {
+  grid-area: overlay;
+  position: relative;
+  width: 0;
+  transition: width 0.3s ease;
+  background: white;
+  border-left: 1px solid #e5e7eb;
+}
+
+.main-layout-overlay.visible {
+  width: 320px;
+}
+
+.dark .main-layout-overlay {
+  background: #1f2937;
+  border-left-color: #374151;
+}
+
+.overlay-content {
+  width: 320px;
+  height: 100%;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.overlay-toggle-button {
+  position: absolute;
+  top: 50%;
+  left: -20px;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.overlay-toggle-button:hover {
+  background: #f9fafb;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.dark .overlay-toggle-button {
+  background: #374151;
+  border-color: #4b5563;
+  color: #d1d5db;
+}
+
+.dark .overlay-toggle-button:hover {
+  background: #4b5563;
+}
+
+/* Mobile Sidebar Backdrop */
+.mobile-sidebar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 35;
+  animation: fadeIn 0.2s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .main-layout-grid {
+    grid-template-areas:
+      "header header"
+      "main main";
+    grid-template-columns: 1fr;
+  }
+
+  .main-layout-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .main-layout-overlay.visible {
+    width: 320px;
+    transform: translateX(0);
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .overlay-toggle-button {
+    left: -45px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-layout-grid {
+    grid-template-areas:
+      "header"
+      "main";
+    grid-template-columns: 1fr;
+  }
+
+  .main-layout-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: translateX(-100%);
+    z-index: 45;
+    width: 280px !important;
+    height: 100vh;
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .main-layout-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .main-layout-content {
+    padding-top: 0.5rem;
+    padding-bottom: 1rem;
+  }
+
+  .main-content-container {
+    padding: 0 1rem;
+  }
+
+  .main-layout-overlay.visible {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .overlay-content {
+    width: 100%;
+  }
+
+  .overlay-toggle-button {
+    left: -35px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .main-content-container {
+    padding: 0 2rem;
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .main-content-container {
+    max-width: 1200px;
+    padding: 0 2rem;
+  }
+}
+
+@media (min-width: 1281px) {
+  .main-content-container {
+    max-width: 1400px;
+    padding: 0 3rem;
+  }
+}
+
+/* Animation Keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .main-layout-header,
+  .main-layout-sidebar,
+  .main-layout-overlay {
+    border-width: 2px;
+  }
+
+  .overlay-toggle-button {
+    border-width: 2px;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .main-layout-grid,
+  .main-layout-sidebar,
+  .main-layout-overlay,
+  .mobile-sidebar-backdrop,
+  .overlay-toggle-button {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* Focus Management */
+.main-layout-grid:focus-within {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+}
+
+/* Print Styles */
+@media print {
+  .main-layout-header,
+  .main-layout-sidebar,
+  .main-layout-overlay,
+  .mobile-sidebar-backdrop {
+    display: none !important;
+  }
+
+  .main-layout-grid {
+    grid-template-areas: "main";
+    grid-template-columns: 1fr;
+    background: white !important;
+  }
+
+  .main-layout-content {
+    padding: 0;
+  }
+
+  .main-content-container {
+    max-width: 100%;
+    padding: 0;
+  }
+}
+
+/* CSS Custom Properties for Theme Consistency */
+:root {
+  --top-nav-height: 64px;
+  --sidebar-width: 280px;
+  --sidebar-width-collapsed: 64px;
+  --content-padding-top: 1.5rem;
+  --content-padding-bottom: 2rem;
+  --content-padding-x: 2rem;
+  --content-max-width: 1400px;
+  --transition-duration: 0.3s;
+  --border-radius: 0.5rem;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure proper stacking context */
+.main-layout-grid {
+  isolation: isolate;
+}
+
+/* Scrollbar styling for webkit browsers */
+.main-layout-sidebar::-webkit-scrollbar,
+.overlay-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.main-layout-sidebar::-webkit-scrollbar-track,
+.overlay-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.main-layout-sidebar::-webkit-scrollbar-thumb,
+.overlay-content::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.dark .main-layout-sidebar::-webkit-scrollbar-thumb,
+.dark .overlay-content::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+.main-layout-sidebar::-webkit-scrollbar-thumb:hover,
+.overlay-content::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.dark .main-layout-sidebar::-webkit-scrollbar-thumb:hover,
+.dark .overlay-content::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}

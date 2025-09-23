@@ -1,181 +1,262 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Search, Bell, User, Menu, Sun, Moon, X } from 'lucide-react';
+import "../Dashboard/styles/TopNav.css";
+
+interface UserMenuOption {
+  label: string;
+  href: string;
+  icon?: React.ReactNode;
+  onClick?: () => void;
+}
 
 const TopNavigationBar: React.FC = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [isDark, setIsDark] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+
+  const userMenuOptions: UserMenuOption[] = [
+    { label: 'Profile', href: '#profile', icon: <User size={16} /> },
+    { label: 'Settings', href: '#settings', icon: <User size={16} /> },
+    { label: 'Sign out', href: '#logout', icon: <User size={16} /> }
+  ];
+
+  // Initialize theme from localStorage or system preference
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('datasight-theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    const initialTheme = savedTheme === 'dark' || (!savedTheme && systemPrefersDark);
+    setIsDarkMode(initialTheme);
+    document.documentElement.classList.toggle('dark', initialTheme);
+  }, []);
 
   const toggleTheme = () => {
-    setIsDark(!isDark);
-    document.documentElement.classList.toggle('dark');
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+    document.documentElement.classList.toggle('dark', newDarkMode);
+    localStorage.setItem('datasight-theme', newDarkMode ? 'dark' : 'light');
   };
 
-  // Close user menu when clicking outside
+  // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
         setIsUserMenuOpen(false);
       }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node) &&
+          mobileMenuButtonRef.current && !mobileMenuButtonRef.current.contains(event.target as Node)) {
+        setIsMobileMenuOpen(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Handle keyboard events for user menu
+  // Handle escape key for menus
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        if (isUserMenuOpen) {
+          setIsUserMenuOpen(false);
+          userMenuRef.current?.querySelector('button')?.focus();
+        }
+        if (isMobileMenuOpen) {
+          setIsMobileMenuOpen(false);
+          mobileMenuButtonRef.current?.focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isUserMenuOpen, isMobileMenuOpen]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Search query:', searchQuery);
+    // Implement search functionality
+  };
+
   const handleUserMenuKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      setIsUserMenuOpen(false);
-    } else if (e.key === 'Enter' || e.key === ' ') {
+    if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       setIsUserMenuOpen(!isUserMenuOpen);
+    } else if (e.key === 'ArrowDown' && isUserMenuOpen) {
+      e.preventDefault();
+      const firstMenuItem = userMenuRef.current?.querySelector('a') as HTMLElement;
+      firstMenuItem?.focus();
     }
   };
 
-  // Handle keyboard events for mobile menu
   const handleMobileMenuKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      setIsMobileMenuOpen(false);
-    } else if (e.key === 'Enter' || e.key === ' ') {
+    if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       setIsMobileMenuOpen(!isMobileMenuOpen);
     }
   };
 
   return (
-    <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 fixed top-0 left-0 right-0 z-50">
-      <div className="flex items-center justify-between">
-        {/* Left: Logo and Menu Button */}
-        <div className="flex items-center space-x-4">
+    <header className="top-navigation-bar">
+      <nav className="top-nav-container" aria-label="Main navigation">
+        {/* Left: Logo and Mobile Menu Button */}
+        <div className="top-nav-section top-nav-left">
           <button
+            ref={mobileMenuButtonRef}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             onKeyDown={handleMobileMenuKeyDown}
-            className="lg:hidden p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800 min-h-[44px]"
+            className="top-nav-mobile-menu-button"
             aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-menu"
           >
             {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
           
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">DS</span>
-            </div>
-            <span className="font-semibold text-gray-900 dark:text-white text-lg hidden sm:block">
-              DataSight Pro
-            </span>
+          <div className="top-nav-logo">
+            <div className="top-nav-logo-icon">DS</div>
+            <span className="top-nav-logo-text">DataSight Pro</span>
           </div>
         </div>
 
         {/* Center: Search Bar */}
-        <div className="hidden md:flex flex-1 max-w-md mx-8">
-          <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-            <input
-              type="text"
-              placeholder="Search analytics, reports..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              aria-label="Search"
-            />
-          </div>
+        <div className="top-nav-section top-nav-center">
+          <form onSubmit={handleSearch} className="top-nav-search-form">
+            <div className="top-nav-search-container">
+              <Search className="top-nav-search-icon" size={16} aria-hidden="true" />
+              <input
+                type="search"
+                placeholder="Search analytics, reports..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="top-nav-search-input"
+                aria-label="Search dashboard"
+              />
+            </div>
+          </form>
         </div>
 
         {/* Right: Actions and User Menu */}
-        <div className="flex items-center space-x-2" role="menubar" aria-label="User actions">
+        <div className="top-nav-section top-nav-right">
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800 min-h-[44px]"
-            aria-label="Toggle theme"
-            role="menuitem"
+            className="top-nav-button"
+            aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
           >
-            {isDark ? <Sun size={18} /> : <Moon size={18} />}
+            {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 
           {/* Notifications */}
           <button
-            className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800 relative min-h-[44px]"
+            className="top-nav-button top-nav-notification-button"
             aria-label="Notifications"
-            role="menuitem"
           >
             <Bell size={18} />
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
-              3
-            </span>
+            <span className="top-nav-notification-badge">3</span>
           </button>
 
           {/* User Menu */}
-          <div className="relative" ref={userMenuRef}>
+          <div className="top-nav-user-menu-container" ref={userMenuRef}>
             <button
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
               onKeyDown={handleUserMenuKeyDown}
-              className="flex items-center space-x-2 p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800 min-h-[44px]"
+              className="top-nav-user-button"
               aria-label="User menu"
               aria-expanded={isUserMenuOpen}
-              role="menuitem"
+              aria-haspopup="true"
             >
-              <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
+              <div className="top-nav-user-avatar">
                 <User size={16} />
               </div>
-              <span className="hidden sm:block text-sm font-medium">John Doe</span>
+              <span className="top-nav-user-name">John Doe</span>
             </button>
 
             {isUserMenuOpen && (
               <div 
-                className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50 focus:outline-none"
+                className="top-nav-user-dropdown"
                 role="menu"
-                tabIndex={-1}
+                aria-label="User options"
               >
-                <a 
-                  href="#" 
-                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800"
-                  role="menuitem"
-                  tabIndex={0}
-                >
-                  Profile
-                </a>
-                <a 
-                  href="#" 
-                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800"
-                  role="menuitem"
-                  tabIndex={0}
-                >
-                  Settings
-                </a>
-                <hr className="my-1 border-gray-200 dark:border-gray-600" />
-                <a 
-                  href="#" 
-                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800"
-                  role="menuitem"
-                  tabIndex={0}
-                >
-                  Sign out
-                </a>
+                {userMenuOptions.map((option) => (
+                  <a
+                    key={option.label}
+                    href={option.href}
+                    className="top-nav-user-menu-item"
+                    role="menuitem"
+                    tabIndex={0}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      option.onClick?.();
+                      setIsUserMenuOpen(false);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        option.onClick?.();
+                        setIsUserMenuOpen(false);
+                      }
+                    }}
+                  >
+                    {option.icon && (
+                      <span className="top-nav-menu-item-icon" aria-hidden="true">
+                        {option.icon}
+                      </span>
+                    )}
+                    {option.label}
+                  </a>
+                ))}
               </div>
             )}
           </div>
         </div>
-      </div>
+      </nav>
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden mt-3 py-2 border-t border-gray-200 dark:border-gray-700">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+        <div
+          ref={mobileMenuRef}
+          id="mobile-menu"
+          className="top-nav-mobile-menu"
+          role="menu"
+          aria-label="Mobile navigation"
+        >
+          <div className="top-nav-mobile-search">
+            <Search className="top-nav-mobile-search-icon" size={16} />
             <input
-              type="text"
+              type="search"
               placeholder="Search analytics, reports..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="top-nav-mobile-search-input"
               aria-label="Search"
             />
           </div>
+          
+          <div className="top-nav-mobile-actions">
+            {userMenuOptions.map((option) => (
+              <a
+                key={option.label}
+                href={option.href}
+                className="top-nav-mobile-menu-item"
+                role="menuitem"
+                onClick={(e) => {
+                  e.preventDefault();
+                  option.onClick?.();
+                  setIsMobileMenuOpen(false);
+                }}
+              >
+                {option.label}
+              </a>
+            ))}
+          </div>
         </div>
       )}
-    </nav>
+    </header>
   );
 };
 

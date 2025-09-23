@@ -1,127 +1,113 @@
 import React from 'react';
-import WidgetSettingsMenu from '../Dashboard/widgets/WidgetSettingsMenu';
-import HelpPopover from '../ui/HelpPopover';
-import type { WidgetSettings } from '../Dashboard/widgets/WidgetSettings';
+import '../styles/ContentWidgets.css';
 
-/**
- * Trend information for KPI cards
- */
-interface KPITrend {
-  direction: 'up' | 'down';
-  percentage: number;
-}
-
-/**
- * Props for the KPICard component
- */
-interface KPICardProps {
-  /** Title of the KPI */
+interface KpiWidgetProps {
+  /** KPI title */
   title: string;
-  /** Current value of the KPI */
+  /** Current value */
   value: number | string;
-  /** Unit of measurement for the value */
-  unit?: string;
-  /** Trend information for the KPI */
-  trend?: KPITrend;
-  /** Current widget settings */
-  settings: WidgetSettings;
-  /** Callback when settings are changed */
-  onSettingsChange: (settings: WidgetSettings) => void;
+  /** Previous value for comparison */
+  previousValue?: number | string;
+  /** Trend direction */
+  trend?: 'up' | 'down' | 'neutral';
+  /** Trend percentage */
+  trendPercentage?: number;
+  /** Optional icon */
+  icon?: React.ReactNode;
+  /** Value formatter function */
+  formatValue?: (value: number | string) => string;
   /** Additional CSS classes */
   className?: string;
+  /** Whether to show as loading */
+  loading?: boolean;
 }
 
 /**
- * KPI card component displaying key performance indicators with trend information
- * Provides accessible metric visualization with user customization options
+ * KPI Widget for displaying key performance indicators with trend analysis
  */
-const KPICard: React.FC<KPICardProps> = ({
+const KpiWidget: React.FC<KpiWidgetProps> = ({
   title,
   value,
-  unit,
-  trend,
-  settings,
-  onSettingsChange,
-  className = ''
+  previousValue,
+  trend = 'neutral',
+  trendPercentage,
+  icon,
+  formatValue,
+  className = '',
+  loading = false
 }) => {
-  const getDensityClasses = (): string => {
-    return settings.density === 'compact' 
-      ? 'p-4' 
-      : 'p-6';
-  };
-
-  const formatValue = (): string => {
-    if (value === null || value === undefined || value === '') return '—';
+  const formatNumber = (val: number | string): string => {
+    if (formatValue) return formatValue(val);
     
-    if (typeof value === 'number') {
-      // Handle numeric formatting based on value magnitude
-      if (Math.abs(value) >= 1000000) {
-        return `${(value / 1000000).toFixed(1)}M`;
-      } else if (Math.abs(value) >= 1000) {
-        return `${(value / 1000).toFixed(1)}K`;
-      }
-      return value.toLocaleString();
+    if (typeof val === 'number') {
+      if (val >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
+      if (val >= 1000) return `${(val / 1000).toFixed(1)}K`;
+      return val.toString();
     }
-    
-    return value.toString();
+    return val;
   };
 
-  const showTrend = trend !== undefined;
+  const getTrendIcon = () => {
+    switch (trend) {
+      case 'up':
+        return '↗';
+      case 'down':
+        return '↘';
+      default:
+        return '→';
+    }
+  };
 
-  return (
-    <div 
-      className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 ${getDensityClasses()} ${className}`}
-      role="region"
-      aria-label={`KPI card for ${title}`}
-    >
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-base font-medium text-gray-700 dark:text-gray-300">
-          {title}
-        </h3>
-        <div className="flex items-center space-x-2">
-          <HelpPopover 
-            title="About This KPI"
-            content="This KPI shows the current value and optional trend over time. Use the settings menu to customize display options and export the data."
-          />
-          <WidgetSettingsMenu
-            widgetType="kpi"
-            currentSettings={settings}
-            onSettingsChange={onSettingsChange}
-            onExport={(format) => {
-              // Export functionality for KPI cards
-              console.log(`Exporting KPI as ${format}`);
-            }}
-          />
+  const getTrendClass = () => {
+    switch (trend) {
+      case 'up':
+        return 'kpi-trend-up';
+      case 'down':
+        return 'kpi-trend-down';
+      default:
+        return 'kpi-trend-neutral';
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className={`kpi-widget ${className} kpi-loading`} role="region" aria-label={`Loading ${title}`}>
+        <div className="kpi-header">
+          <h3 className="kpi-title">{title}</h3>
+        </div>
+        <div className="kpi-content">
+          <div className="kpi-value-skeleton"></div>
+          <div className="kpi-trend-skeleton"></div>
         </div>
       </div>
+    );
+  }
 
-      <div className="flex items-end justify-between">
-        <div>
-          <div className="text-3xl font-bold text-gray-900 dark:text-white">
-            {formatValue()}
-          </div>
-          {unit && (
-            <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              {unit}
-            </div>
-          )}
+  return (
+    <div className={`kpi-widget ${className}`} role="region" aria-label={`${title}: ${formatNumber(value)}`}>
+      <div className="kpi-header">
+        <h3 className="kpi-title">{title}</h3>
+        {icon && <span className="kpi-icon" aria-hidden="true">{icon}</span>}
+      </div>
+      
+      <div className="kpi-content">
+        <div className="kpi-value" aria-live="polite">
+          {formatNumber(value)}
         </div>
-
-        {showTrend && (
-          <div 
-            className={`flex items-center space-x-1 px-2 py-1 rounded-full text-sm font-medium ${
-              trend.direction === 'up' 
-                ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' 
-                : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
-            }`}
-            aria-label={`${trend.direction === 'up' ? 'Up' : 'Down'} ${trend.percentage}%`}
-          >
-            <span aria-hidden="true">
-              {trend.direction === 'up' ? '↑' : '↓'}
-            </span>
-            <span>
-              {trend.percentage}%
-            </span>
+        
+        {(trend !== 'neutral' || previousValue) && (
+          <div className={`kpi-trend ${getTrendClass()}`}>
+            <span className="kpi-trend-icon" aria-hidden="true">{getTrendIcon()}</span>
+            {trendPercentage && (
+              <span className="kpi-trend-percentage">
+                {Math.abs(trendPercentage)}%
+              </span>
+            )}
+            {previousValue && !trendPercentage && (
+              <span className="kpi-trend-comparison">
+                from {formatNumber(previousValue)}
+              </span>
+            )}
           </div>
         )}
       </div>
@@ -129,4 +115,4 @@ const KPICard: React.FC<KPICardProps> = ({
   );
 };
 
-export default KPICard;
+export default KpiWidget;

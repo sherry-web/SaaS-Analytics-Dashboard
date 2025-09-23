@@ -1,175 +1,149 @@
 import React, { useState, useEffect } from 'react';
-import MainLayoutGrid from '../components/layout/MainLayoutGrid';
-import BarChart from '../components/data/BarChart';
-import LineChart from '../components/data/LineChart';
-import DataTable from '../components/data/DataTable';
-import KPICard from '../components/data/KPICard';
-import type { WidgetSettings } from '../components/Dashboard/widgets/WidgetSettings';
+import DashboardWidgetGrid from '../components/Dashboard/DashboardWidgetGrid';
+import DashboardWidget from '../components/Dashboard/DashboardWidget';
+import '../components/Dashboard/styles/SaaSFinalPolish.css';
+
+// Mock widgets for demonstration - these would be replaced with actual imports
+const MockKpiWidget: React.FC<{
+  title: string;
+  value: number | string;
+  previousValue?: number | string;
+  trend?: 'up' | 'down' | 'neutral';
+  trendPercentage?: number;
+  formatValue?: (value: number | string) => string;
+}> = ({ value, formatValue }) => (
+  <div className="kpi-value">{formatValue ? formatValue(value) : value}</div>
+);
+
+const MockChartWidget: React.FC<{
+  title: string;
+  height?: number;
+}> = ({ height = 250 }) => (
+  <div style={{ height: `${height}px`, background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    Chart Preview
+  </div>
+);
+
+const MockTableWidget: React.FC = () => (
+  <div style={{ background: '#f3f4f6', padding: '1rem', borderRadius: '8px' }}>
+    Table Preview
+  </div>
+);
 
 /**
  * Dashboard page component aggregating all analytics widgets
- * Provides a comprehensive overview with per-widget settings persistence
+ * Provides a comprehensive overview with smooth animations
  */
 const Dashboard: React.FC = () => {
-  const [widgetSettings, setWidgetSettings] = useState<Record<string, WidgetSettings>>({});
+  const [isLoading, setIsLoading] = useState(true);
 
-  /**
-   * Load widget settings from localStorage on component mount
-   */
+  // Simulate initial data loading
   useEffect(() => {
-    try {
-      const savedSettings = localStorage.getItem('datasight-dashboard-settings');
-      if (savedSettings) {
-        const parsedSettings = JSON.parse(savedSettings);
-        setWidgetSettings(parsedSettings);
-      }
-    } catch (error) {
-      console.warn('Failed to load settings from localStorage:', error);
-    }
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
   }, []);
 
-  /**
-   * Save widget settings to localStorage whenever they change
-   */
-  useEffect(() => {
-    try {
-      localStorage.setItem('datasight-dashboard-settings', JSON.stringify(widgetSettings));
-    } catch (error) {
-      console.warn('Failed to save settings to localStorage:', error);
-    }
-  }, [widgetSettings]);
-
-  /**
-   * Handle settings change for a specific widget
-   */
-  const handleSettingsChange = (widgetId: string, newSettings: WidgetSettings) => {
-    setWidgetSettings(prev => ({
-      ...prev,
-      [widgetId]: newSettings
-    }));
+  const formatCurrency = (val: number | string): string => {
+    const num = typeof val === 'string' ? parseFloat(val.replace(/[^0-9.]/g, '')) : val;
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(num);
   };
 
-  /**
-   * Handle export request for a specific widget
-   */
-  const handleExport = (widgetId: string, format: 'csv' | 'png') => {
-    console.log(`Exporting ${widgetId} as ${format}`);
+  const formatNumber = (val: number | string): string => {
+    const num = typeof val === 'string' ? parseFloat(val) : val;
+    return new Intl.NumberFormat('en-US').format(num);
   };
 
-  // Sample data for demonstration
-  const barChartData = [
-    { name: 'Desktop', value: 4500 },
-    { name: 'Mobile', value: 2100 },
-    { name: 'Tablet', value: 650 },
-  ];
-
-  const lineChartData = [
-    { name: 'Jan', value: 45000 },
-    { name: 'Feb', value: 52000 },
-    { name: 'Mar', value: 48000 },
-    { name: 'Apr', value: 61000 },
-    { name: 'May', value: 55000 },
-    { name: 'Jun', value: 67000 },
-  ];
-
-  const tableColumns = [
-    { key: 'product', label: 'Product' },
-    { key: 'category', label: 'Category' },
-    { key: 'revenue', label: 'Revenue' },
-    { key: 'growth', label: 'Growth' },
-  ];
-
-  const tableData = [
-    { id: 1, product: 'Analytics Pro', category: 'Software', revenue: '$127,450', growth: '+23.5%' },
-    { id: 2, product: 'Dashboard Suite', category: 'SaaS', revenue: '$98,320', growth: '+18.2%' },
-    { id: 3, product: 'Data Insights', category: 'Analytics', revenue: '$76,890', growth: '-5.1%' },
-  ];
+  const formatPercentage = (val: number | string): string => {
+    const num = typeof val === 'string' ? parseFloat(val) : val;
+    return `${num.toFixed(2)}%`;
+  };
 
   return (
-    <main role="main" aria-label="Analytics Dashboard" className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+    <main role="main" aria-label="Analytics Dashboard" className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 saas-padding-md">
       <div className="max-w-7xl mx-auto">
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <header className="mb-8 saas-spacing-lg">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 saas-fade-in">
             Analytics Dashboard
           </h1>
-          <p className="text-gray-600 dark:text-gray-300">
+          <p className="text-gray-600 dark:text-gray-300 saas-fade-in" style={{ animationDelay: '0.1s' }}>
             Comprehensive overview of your business performance metrics
           </p>
         </header>
 
-        <MainLayoutGrid className="gap-6">
-          {/* KPI Cards */}
-          <section role="region" aria-label="Revenue KPI widget" className="lg:col-span-1">
-            <KPICard
-              title="Total Revenue"
+        <DashboardWidgetGrid columns={3} gap="lg" animateEntrance={!isLoading}>
+          {/* KPI Widgets */}
+          <DashboardWidget
+            title="Total Revenue"
+            loading={isLoading}
+          >
+            <MockKpiWidget
+              title=""
               value={2847392}
-              unit="USD"
-              trend={{ direction: 'up', percentage: 12.5 }}
-              settings={widgetSettings.revenueKpi || {}}
-              onSettingsChange={(settings) => handleSettingsChange('revenueKpi', settings)}
-              className="h-full"
+              formatValue={formatCurrency}
             />
-          </section>
+          </DashboardWidget>
 
-          <section role="region" aria-label="Users KPI widget" className="lg:col-span-1">
-            <KPICard
-              title="Active Users"
+          <DashboardWidget
+            title="Active Users"
+            loading={isLoading}
+          >
+            <MockKpiWidget
+              title=""
               value={47293}
-              trend={{ direction: 'up', percentage: 8.2 }}
-              settings={widgetSettings.usersKpi || {}}
-              onSettingsChange={(settings) => handleSettingsChange('usersKpi', settings)}
-              className="h-full"
+              formatValue={formatNumber}
             />
-          </section>
+          </DashboardWidget>
 
-          <section role="region" aria-label="Conversion KPI widget" className="lg:col-span-1">
-            <KPICard
-              title="Conversion Rate"
+          <DashboardWidget
+            title="Conversion Rate"
+            loading={isLoading}
+          >
+            <MockKpiWidget
+              title=""
               value={3.24}
-              unit="%"
-              trend={{ direction: 'down', percentage: 2.1 }}
-              settings={widgetSettings.conversionKpi || {}}
-              onSettingsChange={(settings) => handleSettingsChange('conversionKpi', settings)}
-              className="h-full"
+              formatValue={formatPercentage}
             />
-          </section>
+          </DashboardWidget>
 
-          {/* Charts */}
-          <section role="region" aria-label="Revenue Trend widget" className="lg:col-span-2">
-            <LineChart
-              title="Revenue Trend"
-              data={lineChartData}
-              settings={widgetSettings.revenueChart || {}}
-              onSettingsChange={(settings) => handleSettingsChange('revenueChart', settings)}
-              onExport={(format) => handleExport('revenueChart', format)}
-              className="h-full"
+          {/* Chart Widgets */}
+          <DashboardWidget
+            title="Revenue Trend"
+            loading={isLoading}
+            className="col-span-2"
+          >
+            <MockChartWidget
+              title=""
+              height={250}
             />
-          </section>
+          </DashboardWidget>
 
-          <section role="region" aria-label="Traffic Sources widget" className="lg:col-span-1">
-            <BarChart
-              title="Traffic by Device"
-              data={barChartData}
-              settings={widgetSettings.trafficChart || {}}
-              onSettingsChange={(settings) => handleSettingsChange('trafficChart', settings)}
-              onExport={(format) => handleExport('trafficChart', format)}
-              className="h-full"
+          <DashboardWidget
+            title="Traffic by Device"
+            loading={isLoading}
+          >
+            <MockChartWidget
+              title=""
+              height={250}
             />
-          </section>
+          </DashboardWidget>
 
-          {/* Data Table */}
-          <section role="region" aria-label="Product Performance widget" className="lg:col-span-3">
-            <DataTable
-              title="Product Performance"
-              columns={tableColumns}
-              rows={tableData}
-              settings={widgetSettings.productTable || {}}
-              onSettingsChange={(settings) => handleSettingsChange('productTable', settings)}
-              onExport={(format) => handleExport('productTable', format)}
-              className="h-full"
-            />
-          </section>
-        </MainLayoutGrid>
+          {/* Table Widget */}
+          <DashboardWidget
+            title="Product Performance"
+            loading={isLoading}
+            className="col-span-3"
+          >
+            <MockTableWidget />
+          </DashboardWidget>
+        </DashboardWidgetGrid>
       </div>
     </main>
   );
