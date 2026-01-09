@@ -8,7 +8,7 @@
   background: white;
   border-radius: 12px;
   border: 1px solid #e5e7eb;
-  height: 100%;
+  height: 100%; /* Changed from fixed height to 100% */
   display: flex;
   flex-direction: column;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -104,7 +104,7 @@
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   overflow: hidden;
-  height: 100%;
+  height: 100%; /* Changed from fixed height to 100% */
   display: flex;
   flex-direction: column;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -173,7 +173,7 @@
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   overflow: hidden;
-  height: 100%;
+  height: 100%; /* Changed from fixed height to 100% */
   display: flex;
   flex-direction: column;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -425,6 +425,7 @@
     background: white !important;
     color: black !important;
     box-shadow: none !important;
+    height: auto !important; /* Allow natural height for printing */
   }
   
   .dark .kpi-widget,

@@ -98,6 +98,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     return 'viewport-large';
   };
 
+  // Function to get widget span from child props
+  const getWidgetSpan = (child: React.ReactNode): string => {
+    if (React.isValidElement(child)) {
+      const props = child.props as any;
+      return props['data-widget-span'] || '1';
+    }
+    return '1';
+  };
+
   return (
     <div 
       className="dashboard-layout" 
@@ -160,6 +169,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               role="grid" 
               aria-label="Dashboard widgets"
               aria-describedby="widget-grid-description"
+              style={{
+                // Dynamically adjust columns based on screen size
+                gridTemplateColumns: `repeat(auto-fill, minmax(var(--widget-min-width), 1fr))`
+              }}
             >
               <div id="widget-grid-description" className="sr-only">
                 Interactive dashboard widgets showing key metrics and analytics. Use arrow keys to navigate between widgets.
@@ -170,6 +183,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   role="gridcell"
                   aria-label={`Widget ${index + 1}`}
                   data-widget-index={index}
+                  data-widget-span={getWidgetSpan(child)}
                   tabIndex={0}
                   aria-roledescription="widget"
                 >
