@@ -1,0 +1,175 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DashboardWidgetGrid - Enhanced Test Coverage > Snapshot Consistency > matches snapshot with custom layout 1`] = `
+<section
+  aria-label="Dashboard widgets"
+  class="dashboard-widget-grid"
+  role="group"
+  style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2rem;"
+>
+  <article
+    aria-labelledby="widget-snapshot-test-title"
+    class="dashboard-widget saas-hover-lift widget-entrance    "
+    id="widget-snapshot-test"
+    role="region"
+  >
+    <header
+      class="widget-header"
+    >
+      <div
+        class="widget-header-content"
+      >
+        <h3
+          class="widget-title"
+          id="widget-snapshot-test-title"
+        >
+          Snapshot Test
+        </h3>
+      </div>
+    </header>
+    <div
+      aria-busy="false"
+      class="widget-content"
+      id="widget-snapshot-test-content"
+    >
+      <div
+        data-testid="widget-Snapshot Test"
+      >
+        Value: 
+        999
+      </div>
+    </div>
+  </article>
+</section>
+`;
+
+exports[`DashboardWidgetGrid - Enhanced Test Coverage > Snapshot Consistency > matches snapshot with default configuration 1`] = `
+<section
+  aria-label="Dashboard widgets"
+  class="dashboard-widget-grid"
+  role="group"
+  style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem;"
+>
+  <div>
+    Default Widget
+  </div>
+</section>
+`;
+
+exports[`DashboardWidgetGrid - Enhanced Test Coverage > Snapshot Consistency > matches snapshot with empty state 1`] = `
+<section
+  aria-label="Dashboard widgets"
+  class="dashboard-widget-grid"
+  role="group"
+  style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem;"
+/>
+`;
+
+exports[`DashboardWidgetGrid - Enhanced Test Coverage > Snapshot Consistency > matches snapshot with multiple widgets 1`] = `
+<section
+  aria-label="Multi-widget Snapshot"
+  class="dashboard-widget-grid"
+  role="group"
+  style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem;"
+>
+  <article
+    aria-labelledby="widget-first-title"
+    class="dashboard-widget saas-hover-lift widget-entrance    "
+    id="widget-first"
+    role="region"
+  >
+    <header
+      class="widget-header"
+    >
+      <div
+        class="widget-header-content"
+      >
+        <h3
+          class="widget-title"
+          id="widget-first-title"
+        >
+          First
+        </h3>
+      </div>
+    </header>
+    <div
+      aria-busy="false"
+      class="widget-content"
+      id="widget-first-content"
+    >
+      <div
+        data-testid="widget-First"
+      >
+        Value: 
+        1
+      </div>
+    </div>
+  </article>
+  <article
+    aria-labelledby="widget-second-title"
+    class="dashboard-widget saas-hover-lift widget-entrance    "
+    id="widget-second"
+    role="region"
+  >
+    <header
+      class="widget-header"
+    >
+      <div
+        class="widget-header-content"
+      >
+        <h3
+          class="widget-title"
+          id="widget-second-title"
+        >
+          Second
+        </h3>
+      </div>
+    </header>
+    <div
+      aria-busy="false"
+      class="widget-content"
+      id="widget-second-content"
+    >
+      <div
+        data-testid="widget-Second"
+      >
+        Value: 
+        2
+      </div>
+    </div>
+  </article>
+  <article
+    aria-labelledby="widget-third-title"
+    class="dashboard-widget saas-hover-lift widget-entrance    "
+    id="widget-third"
+    role="region"
+  >
+    <header
+      class="widget-header"
+    >
+      <div
+        class="widget-header-content"
+      >
+        <h3
+          class="widget-title"
+          id="widget-third-title"
+        >
+          Third
+        </h3>
+      </div>
+    </header>
+    <div
+      aria-busy="false"
+      class="widget-content"
+      id="widget-third-content"
+    >
+      <div
+        data-testid="widget-Third"
+      >
+        Value: 
+        3
+      </div>
+    </div>
+  </article>
+</section>
+`;

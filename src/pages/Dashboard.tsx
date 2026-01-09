@@ -11,22 +11,90 @@ const MockKpiWidget: React.FC<{
   trend?: 'up' | 'down' | 'neutral';
   trendPercentage?: number;
   formatValue?: (value: number | string) => string;
-}> = ({ value, formatValue }) => (
-  <div className="kpi-value">{formatValue ? formatValue(value) : value}</div>
+}> = ({ title, value, formatValue, previousValue, trend, trendPercentage }) => (
+  <div className="kpi-widget" role="region" aria-label={title}>
+    <div className="kpi-header">
+      <h3 className="kpi-title">{title}</h3>
+      <div className="kpi-icon" aria-hidden="true">📊</div>
+    </div>
+    <div className="kpi-content">
+      <div className="kpi-value">{formatValue ? formatValue(value) : value}</div>
+      {(trend && trendPercentage !== undefined) && (
+        <div className={`kpi-trend kpi-trend-${trend}`}>
+          <span className="kpi-trend-icon" aria-hidden="true">
+            {trend === 'up' ? '↑' : trend === 'down' ? '↓' : '→'}
+          </span>
+          <span className="sr-only">
+            {trend === 'up' ? 'Increase of' : trend === 'down' ? 'Decrease of' : 'Change of'} {trendPercentage}%
+          </span>
+          <span aria-hidden="true">{trendPercentage}%</span>
+        </div>
+      )}
+    </div>
+  </div>
 );
 
 const MockChartWidget: React.FC<{
   title: string;
   height?: number;
-}> = ({ height = 250 }) => (
-  <div style={{ height: `${height}px`, background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-    Chart Preview
+}> = ({ title, height = 250 }) => (
+  <div 
+    className="chart-widget" 
+    role="region" 
+    aria-label={title}
+    style={{ height: `${height}px` }}
+  >
+    <div className="chart-header">
+      <h3 className="chart-title">{title}</h3>
+      <p className="chart-description">Mock chart visualization</p>
+    </div>
+    <div className="chart-content">
+      <div className="chart-container" aria-hidden="true">
+        <div className="chart-visualization" style={{ 
+          height: '100%', 
+          background: 'linear-gradient(180deg, #f3f4f6 0%, #e5e7eb 100%)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '8px',
+          color: '#6b7280',
+          fontStyle: 'italic'
+        }}>
+          Chart Preview
+        </div>
+      </div>
+    </div>
   </div>
 );
 
 const MockTableWidget: React.FC = () => (
-  <div style={{ background: '#f3f4f6', padding: '1rem', borderRadius: '8px' }}>
-    Table Preview
+  <div className="table-widget" role="region" aria-label="Product Performance Table">
+    <div className="table-header">
+      <h3 className="table-title">Product Performance</h3>
+      <div className="table-row-count" aria-live="polite">5 items</div>
+    </div>
+    <div className="table-content">
+      <div className="table" role="grid" aria-label="Product data">
+        <div className="table-header-row" role="row">
+          <div className="table-header-cell" role="columnheader">Product</div>
+          <div className="table-header-cell" role="columnheader">Revenue</div>
+          <div className="table-header-cell" role="columnheader">Growth</div>
+        </div>
+        {['Product A', 'Product B', 'Product C', 'Product D', 'Product E'].map((product, index) => (
+          <div key={product} className="table-row" role="row">
+            <div className="table-cell" role="gridcell">{product}</div>
+            <div className="table-cell" role="gridcell">
+              {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(1000000 + index * 250000)}
+            </div>
+            <div className="table-cell" role="gridcell">
+              <span className={`kpi-trend ${index % 3 === 0 ? 'kpi-trend-up' : index % 3 === 1 ? 'kpi-trend-down' : 'kpi-trend-neutral'}`}>
+                {index % 3 === 0 ? '+' : index % 3 === 1 ? '-' : ''}{5 + index}%
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   </div>
 );
 
@@ -63,11 +131,22 @@ const Dashboard: React.FC = () => {
 
   const formatPercentage = (val: number | string): string => {
     const num = typeof val === 'string' ? parseFloat(val) : val;
-    return `${num.toFixed(2)}%`;
+    return `${num > 0 ? '+' : ''}${num.toFixed(2)}%`;
+  };
+
+  // Mock data for trends and percentages
+  const mockTrends = {
+    revenue: { trend: 'up' as const, percentage: 12.5 },
+    users: { trend: 'up' as const, percentage: 8.3 },
+    conversion: { trend: 'down' as const, percentage: 1.2 }
   };
 
   return (
-    <main role="main" aria-label="Analytics Dashboard" className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 saas-padding-md">
+    <main 
+      role="main" 
+      aria-label="Analytics Dashboard" 
+      className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 saas-padding-md"
+    >
       <div className="max-w-7xl mx-auto">
         <header className="mb-8 saas-spacing-lg">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 saas-fade-in">
@@ -78,72 +157,94 @@ const Dashboard: React.FC = () => {
           </p>
         </header>
 
-        <DashboardWidgetGrid columns={3} gap="lg" animateEntrance={!isLoading}>
-          {/* KPI Widgets */}
-          <DashboardWidget
-            title="Total Revenue"
-            loading={isLoading}
+        <div className="saas-fade-in" style={{ animationDelay: '0.2s' }}>
+          <DashboardWidgetGrid 
+            columns={3} 
+            gap="lg" 
+            animateEntrance={!isLoading}
+            ariaLabel="Dashboard widgets grid"
+            className="dashboard-content"
           >
-            <MockKpiWidget
-              title=""
-              value={2847392}
-              formatValue={formatCurrency}
-            />
-          </DashboardWidget>
+            {/* KPI Widgets */}
+            <DashboardWidget
+              title="Total Revenue"
+              loading={isLoading}
+            >
+              <MockKpiWidget
+                title="Total Revenue"
+                value={2847392}
+                previousValue={2530000}
+                trend={mockTrends.revenue.trend}
+                trendPercentage={mockTrends.revenue.percentage}
+                formatValue={formatCurrency}
+              />
+            </DashboardWidget>
 
-          <DashboardWidget
-            title="Active Users"
-            loading={isLoading}
-          >
-            <MockKpiWidget
-              title=""
-              value={47293}
-              formatValue={formatNumber}
-            />
-          </DashboardWidget>
+            <DashboardWidget
+              title="Active Users"
+              loading={isLoading}
+            >
+              <MockKpiWidget
+                title="Active Users"
+                value={47293}
+                previousValue={43680}
+                trend={mockTrends.users.trend}
+                trendPercentage={mockTrends.users.percentage}
+                formatValue={formatNumber}
+              />
+            </DashboardWidget>
 
-          <DashboardWidget
-            title="Conversion Rate"
-            loading={isLoading}
-          >
-            <MockKpiWidget
-              title=""
-              value={3.24}
-              formatValue={formatPercentage}
-            />
-          </DashboardWidget>
+            <DashboardWidget
+              title="Conversion Rate"
+              loading={isLoading}
+            >
+              <MockKpiWidget
+                title="Conversion Rate"
+                value={3.24}
+                previousValue={3.28}
+                trend={mockTrends.conversion.trend}
+                trendPercentage={mockTrends.conversion.percentage}
+                formatValue={formatPercentage}
+              />
+            </DashboardWidget>
 
-          {/* Chart Widgets */}
-          <DashboardWidget
-            title="Revenue Trend"
-            loading={isLoading}
-            className="col-span-2"
-          >
-            <MockChartWidget
-              title=""
-              height={250}
-            />
-          </DashboardWidget>
+            {/* Chart Widgets */}
+            <DashboardWidget
+              title="Revenue Trend"
+              loading={isLoading}
+              className="col-span-2"
+            >
+              <MockChartWidget
+                title="Revenue Trend"
+                height={250}
+              />
+            </DashboardWidget>
 
-          <DashboardWidget
-            title="Traffic by Device"
-            loading={isLoading}
-          >
-            <MockChartWidget
-              title=""
-              height={250}
-            />
-          </DashboardWidget>
+            <DashboardWidget
+              title="Traffic by Device"
+              loading={isLoading}
+            >
+              <MockChartWidget
+                title="Traffic by Device"
+                height={250}
+              />
+            </DashboardWidget>
 
-          {/* Table Widget */}
-          <DashboardWidget
-            title="Product Performance"
-            loading={isLoading}
-            className="col-span-3"
-          >
-            <MockTableWidget />
-          </DashboardWidget>
-        </DashboardWidgetGrid>
+            {/* Table Widget */}
+            <DashboardWidget
+              title="Product Performance"
+              loading={isLoading}
+              className="col-span-3"
+            >
+              <MockTableWidget />
+            </DashboardWidget>
+          </DashboardWidgetGrid>
+        </div>
+
+        {/* Loading state screen reader announcement */}
+        <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+          {isLoading ? 'Dashboard content is loading...' : 'Dashboard content has loaded.'}
+        </div>
       </div>
     </main>
   );

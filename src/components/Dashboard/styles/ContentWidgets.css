@@ -11,6 +11,15 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+}
+
+.kpi-widget:focus-within {
+  outline: 3px solid #3b82f6;
+  outline-offset: 2px;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1);
 }
 
 .dark .kpi-widget {
@@ -20,7 +29,7 @@
 
 .kpi-header {
   display: flex;
-  justify-content: between;
+  justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
 }
@@ -89,30 +98,6 @@
   font-size: 1rem;
 }
 
-/* KPI Loading States */
-.kpi-loading .kpi-value-skeleton {
-  height: 2.5rem;
-  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
-  border-radius: 6px;
-  margin-bottom: 0.5rem;
-}
-
-.kpi-loading .kpi-trend-skeleton {
-  height: 1rem;
-  width: 60px;
-  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
-  border-radius: 4px;
-}
-
-.dark .kpi-loading .kpi-value-skeleton,
-.dark .kpi-loading .kpi-trend-skeleton {
-  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
-}
-
 /* Chart Widget Styles */
 .chart-widget {
   background: white;
@@ -122,6 +107,14 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chart-widget:focus-within {
+  outline: 3px solid #3b82f6;
+  outline-offset: 2px;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1);
 }
 
 .dark .chart-widget {
@@ -170,120 +163,8 @@
 
 .chart-container {
   width: 100%;
+  height: 100%;
   position: relative;
-}
-
-.chart-visualization {
-  width: 100%;
-  height: 100%;
-}
-
-.chart-mock {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: flex-end;
-  gap: 8%;
-  padding: 0 5%;
-}
-
-.chart-mock-bars {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-around;
-  width: 100%;
-  height: 100%;
-}
-
-.chart-mock-bar {
-  width: 8%;
-  background: #3b82f6;
-  border-radius: 3px 3px 0 0;
-  transition: height 0.3s ease;
-}
-
-.dark .chart-mock-bar {
-  background: #2563eb;
-}
-
-.chart-footer {
-  padding: 1rem 1.5rem;
-  border-top: 1px solid #f3f4f6;
-}
-
-.dark .chart-footer {
-  border-top-color: #374151;
-}
-
-.chart-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-}
-
-.chart-legend-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.chart-legend-color {
-  width: 12px;
-  height: 12px;
-  border-radius: 2px;
-  flex-shrink: 0;
-}
-
-.chart-legend-label {
-  font-size: 0.75rem;
-  color: #6b7280;
-}
-
-.dark .chart-legend-label {
-  color: #9ca3af;
-}
-
-/* Chart Placeholders */
-.chart-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  width: 100%;
-  color: #6b7280;
-}
-
-.chart-loading {
-  min-height: 200px;
-}
-
-.chart-skeleton {
-  width: 80%;
-  height: 80%;
-  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
-  border-radius: 8px;
-}
-
-.dark .chart-skeleton {
-  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
-}
-
-.chart-error-icon,
-.chart-empty-icon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-  opacity: 0.5;
-}
-
-.chart-error-message,
-.chart-empty-message {
-  font-size: 0.875rem;
-  margin: 0;
-  text-align: center;
 }
 
 /* Table Widget Styles */
@@ -295,6 +176,14 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.table-widget:focus-within {
+  outline: 3px solid #3b82f6;
+  outline-offset: 2px;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1);
 }
 
 .dark .table-widget {
@@ -373,6 +262,11 @@
   background: #374151;
 }
 
+.table-header-cell.sortable:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: -1px;
+}
+
 .table-header-cell.sorted {
   color: #111827;
 }
@@ -411,152 +305,179 @@
   background: #374151;
 }
 
-.clickable-row:focus {
+.clickable-row:focus-visible {
   outline: 2px solid #3b82f6;
   outline-offset: -2px;
+  background: #f3f4f6;
 }
 
-/* Table Empty and Error States */
-.table-empty,
-.table-error {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem 2rem;
-  color: #6b7280;
-  text-align: center;
+.dark .clickable-row:focus-visible {
+  background: #374151;
 }
 
-.dark .table-empty,
-.dark .table-error {
-  color: #9ca3af;
-}
+/* ==========================================================================
+   High Contrast Mode Support
+   ========================================================================== */
 
-.table-empty-icon,
-.table-error-icon {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  opacity: 0.5;
-}
-
-.table-empty-message,
-.table-error-message {
-  font-size: 0.875rem;
-  margin: 0;
-}
-
-/* Table Loading States */
-.table-skeleton {
-  padding: 1rem;
-}
-
-.table-row-skeleton {
-  display: flex;
-  gap: 1rem;
-  padding: 1rem 0;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-.dark .table-row-skeleton {
-  border-bottom-color: #374151;
-}
-
-.table-cell-skeleton {
-  flex: 1;
-  height: 1rem;
-  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
-  border-radius: 4px;
-}
-
-.dark .table-cell-skeleton {
-  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
-}
-
-/* Animations */
-@keyframes loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .kpi-widget {
-    padding: 1.25rem;
-  }
-  
-  .kpi-value {
-    font-size: 1.875rem;
-  }
-  
-  .chart-header,
-  .table-header {
-    padding: 1.25rem 1.25rem 1rem;
-  }
-  
-  .chart-content {
-    padding: 0.75rem;
-  }
-  
-  .table-content {
-    overflow-x: auto;
-  }
-  
-  .table {
-    min-width: 600px;
-  }
-  
-  .table-header-cell,
-  .table-cell {
-    padding: 0.75rem;
-  }
-}
-
-/* High Contrast Mode Support */
 @media (prefers-contrast: high) {
   .kpi-widget,
   .chart-widget,
   .table-widget {
     border-width: 2px;
+    border-color: #000000;
   }
   
   .chart-header,
   .chart-footer,
   .table-header {
     border-bottom-width: 2px;
+    border-bottom-color: #000000;
   }
   
   .table-header-cell,
   .table-cell {
     border-bottom-width: 2px;
+    border-bottom-color: #000000;
+  }
+  
+  .kpi-widget:focus-within,
+  .chart-widget:focus-within,
+  .table-widget:focus-within {
+    outline: 3px solid #000000;
+    outline-offset: 3px;
+  }
+  
+  .clickable-row:focus-visible {
+    outline: 3px solid #000000;
+    outline-offset: -3px;
+  }
+  
+  .kpi-trend-up {
+    color: #006400;
+  }
+  
+  .kpi-trend-down {
+    color: #8b0000;
+  }
+  
+  .dark .kpi-trend-up {
+    color: #00ff00;
+  }
+  
+  .dark .kpi-trend-down {
+    color: #ff0000;
   }
 }
 
-/* Reduced Motion Support */
+/* ==========================================================================
+   Reduced Motion Support
+   ========================================================================== */
+
 @media (prefers-reduced-motion: reduce) {
-  .chart-mock-bar {
+  .kpi-widget,
+  .chart-widget,
+  .table-widget {
     transition: none;
   }
   
-  .kpi-loading .kpi-value-skeleton,
-  .kpi-loading .kpi-trend-skeleton,
-  .chart-skeleton,
-  .table-cell-skeleton {
-    animation: none;
+  .kpi-widget:focus-within,
+  .chart-widget:focus-within,
+  .table-widget:focus-within {
+    transform: none;
+  }
+  
+  .chart-mock-bar {
+    transition: none;
   }
   
   .clickable-row {
     transition: none;
   }
+  
+  /* Disable loading animations */
+  .kpi-loading .kpi-value-skeleton,
+  .kpi-loading .kpi-trend-skeleton,
+  .chart-skeleton,
+  .table-cell-skeleton {
+    animation: none;
+    background: #f3f4f6 !important;
+  }
+  
+  .dark .kpi-loading .kpi-value-skeleton,
+  .dark .kpi-loading .kpi-trend-skeleton,
+  .dark .chart-skeleton,
+  .dark .table-cell-skeleton {
+    background: #374151 !important;
+  }
 }
 
-/* CSS Custom Properties */
+/* ==========================================================================
+   Print Styles for Widgets
+   ========================================================================== */
+
+@media print {
+  .kpi-widget,
+  .chart-widget,
+  .table-widget {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border: 1px solid #000 !important;
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+  
+  .dark .kpi-widget,
+  .dark .chart-widget,
+  .dark .table-widget {
+    background: white !important;
+    color: black !important;
+    border-color: #000 !important;
+  }
+  
+  .kpi-title,
+  .chart-title,
+  .table-title {
+    color: #000 !important;
+  }
+  
+  .kpi-value {
+    color: #000 !important;
+  }
+  
+  .kpi-trend-up {
+    color: #000 !important;
+    font-weight: bold;
+  }
+  
+  .kpi-trend-down {
+    color: #000 !important;
+    font-weight: bold;
+  }
+  
+  /* Hide decorative elements in print */
+  .kpi-icon,
+  .chart-mock-bar,
+  .sort-indicator {
+    display: none !important;
+  }
+  
+  /* Ensure tables are readable */
+  .table {
+    border: 1px solid #000;
+  }
+  
+  .table-header-cell,
+  .table-cell {
+    border: 1px solid #000 !important;
+    color: #000 !important;
+  }
+}
+
+/* ==========================================================================
+   CSS Custom Properties for Theme Support
+   ========================================================================== */
+
 :root {
   --chart-color-1: #3b82f6;
   --chart-color-2: #10b981;
@@ -573,4 +494,25 @@
   --chart-color-4: #dc2626;
   --chart-color-5: #7c3aed;
   --chart-color-6: #db2777;
+}
+
+/* High contrast custom properties */
+@media (prefers-contrast: high) {
+  :root {
+    --chart-color-1: #0000ff;
+    --chart-color-2: #008000;
+    --chart-color-3: #ffa500;
+    --chart-color-4: #ff0000;
+    --chart-color-5: #800080;
+    --chart-color-6: #ff69b4;
+  }
+  
+  .dark {
+    --chart-color-1: #00ffff;
+    --chart-color-2: #00ff00;
+    --chart-color-3: #ffff00;
+    --chart-color-4: #ff0000;
+    --chart-color-5: #ff00ff;
+    --chart-color-6: #ffb6c1;
+  }
 }

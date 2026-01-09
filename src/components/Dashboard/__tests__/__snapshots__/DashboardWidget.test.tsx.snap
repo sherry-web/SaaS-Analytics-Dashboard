@@ -1,0 +1,129 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DashboardWidget - Enhanced Test Coverage > Snapshot Consistency > matches snapshot with multiple element children 1`] = `
+<article
+  aria-labelledby="widget-multi-element-widget-title"
+  class="dashboard-widget saas-hover-lift widget-entrance test-class   "
+  id="widget-multi-element-widget"
+  role="region"
+>
+  <header
+    class="widget-header"
+  >
+    <div
+      class="widget-header-content"
+    >
+      <h3
+        class="widget-title"
+        id="widget-multi-element-widget-title"
+      >
+        Multi-element Widget
+      </h3>
+    </div>
+  </header>
+  <div
+    aria-busy="false"
+    class="widget-content"
+    id="widget-multi-element-widget-content"
+  >
+    <div>
+      First
+    </div>
+    <span>
+      Second
+    </span>
+    <p>
+      Third
+    </p>
+  </div>
+</article>
+`;
+
+exports[`DashboardWidget - Enhanced Test Coverage > Snapshot Consistency > matches snapshot with null children 1`] = `
+<article
+  aria-labelledby="widget-null-children-snapshot-title"
+  class="dashboard-widget saas-hover-lift widget-entrance    "
+  id="widget-null-children-snapshot"
+  role="region"
+>
+  <header
+    class="widget-header"
+  >
+    <div
+      class="widget-header-content"
+    >
+      <h3
+        class="widget-title"
+        id="widget-null-children-snapshot-title"
+      >
+        Null Children Snapshot
+      </h3>
+    </div>
+  </header>
+  <div
+    aria-busy="false"
+    class="widget-content"
+    id="widget-null-children-snapshot-content"
+  />
+</article>
+`;
+
+exports[`DashboardWidget - Enhanced Test Coverage > Snapshot Consistency > matches snapshot with string children 1`] = `
+<article
+  aria-labelledby="widget-string-widget-title"
+  class="dashboard-widget saas-hover-lift widget-entrance    "
+  id="widget-string-widget"
+  role="region"
+>
+  <header
+    class="widget-header"
+  >
+    <div
+      class="widget-header-content"
+    >
+      <h3
+        class="widget-title"
+        id="widget-string-widget-title"
+      >
+        String Widget
+      </h3>
+    </div>
+  </header>
+  <div
+    aria-busy="false"
+    class="widget-content"
+    id="widget-string-widget-content"
+  >
+    Simple text content
+  </div>
+</article>
+`;
+
+exports[`DashboardWidget - Enhanced Test Coverage > Snapshot Consistency > matches snapshot with undefined children 1`] = `
+<article
+  aria-labelledby="widget-undefined-children-snapshot-title"
+  class="dashboard-widget saas-hover-lift widget-entrance    "
+  id="widget-undefined-children-snapshot"
+  role="region"
+>
+  <header
+    class="widget-header"
+  >
+    <div
+      class="widget-header-content"
+    >
+      <h3
+        class="widget-title"
+        id="widget-undefined-children-snapshot-title"
+      >
+        Undefined Children Snapshot
+      </h3>
+    </div>
+  </header>
+  <div
+    aria-busy="false"
+    class="widget-content"
+    id="widget-undefined-children-snapshot-content"
+  />
+</article>
+`;

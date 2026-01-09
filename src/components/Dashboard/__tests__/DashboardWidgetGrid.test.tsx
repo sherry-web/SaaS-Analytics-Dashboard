@@ -265,6 +265,22 @@ describe('DashboardWidgetGrid - Enhanced Test Coverage', () => {
         gridTemplateColumns: 'repeat(100, minmax(0, 1fr))'
       });
     });
+
+    test('handles null children gracefully', () => {
+      render(<DashboardWidgetGrid children={null} />);
+
+      const grid = screen.getByRole('group');
+      expect(grid).toBeInTheDocument();
+      expect(grid).toBeEmptyDOMElement();
+    });
+
+    test('handles undefined children gracefully', () => {
+      render(<DashboardWidgetGrid children={undefined} />);
+
+      const grid = screen.getByRole('group');
+      expect(grid).toBeInTheDocument();
+      expect(grid).toBeEmptyDOMElement();
+    });
   });
 
   describe('Snapshot Consistency', () => {

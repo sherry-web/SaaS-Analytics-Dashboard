@@ -1,16 +1,14 @@
-import axios from 'axios';
+import axios, { AxiosResponse, AxiosError } from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api',
-  timeout: 10000,
+  baseURL: import.meta.env.VITE_API_BASE_URL ?? "/api",
+  timeout: 30000,
 });
 
+// explicit typings for interceptor handlers to avoid implicit any
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    console.error('API Error:', error);
-    throw error;
-  }
+  (response: AxiosResponse) => response,
+  (error: AxiosError) => Promise.reject(error)
 );
 
 export default api;

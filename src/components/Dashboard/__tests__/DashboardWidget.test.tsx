@@ -12,7 +12,7 @@ describe('DashboardWidget - Enhanced Test Coverage', () => {
   describe('Child Content Rendering', () => {
     test('renders string children correctly', () => {
       render(
-        <DashboardWidget>
+        <DashboardWidget title="String Widget">
           Simple text content
         </DashboardWidget>
       );
@@ -22,7 +22,7 @@ describe('DashboardWidget - Enhanced Test Coverage', () => {
 
     test('renders single div element children', () => {
       render(
-        <DashboardWidget>
+        <DashboardWidget title="Single Div Widget">
           <div data-testid="single-div">Single div content</div>
         </DashboardWidget>
       );
@@ -33,7 +33,7 @@ describe('DashboardWidget - Enhanced Test Coverage', () => {
 
     test('renders multiple sibling elements', () => {
       render(
-        <DashboardWidget>
+        <DashboardWidget title="Multi Element Widget">
           <div>First element</div>
           <span>Second element</span>
           <p>Third element</p>
@@ -54,7 +54,7 @@ describe('DashboardWidget - Enhanced Test Coverage', () => {
       );
 
       render(
-        <DashboardWidget>
+        <DashboardWidget title="Nested Component Widget">
           <NestedComponent />
           <div>Additional content</div>
         </DashboardWidget>
@@ -70,7 +70,7 @@ describe('DashboardWidget - Enhanced Test Coverage', () => {
   describe('Custom ClassName Application', () => {
     test('applies single custom className', () => {
       render(
-        <DashboardWidget className="custom-widget">
+        <DashboardWidget title="Custom Class Widget" className="custom-widget">
           <div>Content</div>
         </DashboardWidget>
       );
@@ -82,7 +82,7 @@ describe('DashboardWidget - Enhanced Test Coverage', () => {
 
     test('applies multiple custom classNames', () => {
       render(
-        <DashboardWidget className="large-widget dark-theme highlighted">
+        <DashboardWidget title="Multiple Class Widget" className="large-widget dark-theme highlighted">
           <div>Content</div>
         </DashboardWidget>
       );
@@ -96,7 +96,7 @@ describe('DashboardWidget - Enhanced Test Coverage', () => {
 
     test('handles empty className string gracefully', () => {
       render(
-        <DashboardWidget className="">
+        <DashboardWidget title="Empty Class Widget" className="">
           <div>Content</div>
         </DashboardWidget>
       );
@@ -107,7 +107,7 @@ describe('DashboardWidget - Enhanced Test Coverage', () => {
 
     test('combines default and custom classNames correctly', () => {
       const { container } = render(
-        <DashboardWidget className="custom-class">
+        <DashboardWidget title="Combined Class Widget" className="custom-class">
           <div>Content</div>
         </DashboardWidget>
       );
@@ -120,7 +120,7 @@ describe('DashboardWidget - Enhanced Test Coverage', () => {
 
   describe('Empty Children Handling', () => {
     test('renders gracefully with children={null}', () => {
-      const { container } = render(<DashboardWidget children={null} />);
+      const { container } = render(<DashboardWidget title="Null Children Widget" children={null} />);
 
       const widget = screen.getByRole('region');
       expect(widget).toBeInTheDocument();
@@ -132,7 +132,7 @@ describe('DashboardWidget - Enhanced Test Coverage', () => {
     });
 
     test('renders gracefully with children={undefined}', () => {
-      const { container } = render(<DashboardWidget children={undefined} />);
+      const { container } = render(<DashboardWidget title="Undefined Children Widget" children={undefined} />);
 
       const widget = screen.getByRole('region');
       expect(widget).toBeInTheDocument();
@@ -144,7 +144,7 @@ describe('DashboardWidget - Enhanced Test Coverage', () => {
     });
 
     test('maintains accessibility with empty children', () => {
-      render(<DashboardWidget children={null} title="Empty Widget" />);
+      render(<DashboardWidget title="Empty Widget" children={null} />);
 
       const widget = screen.getByRole('region');
       expect(widget).toHaveAttribute('aria-label', 'Empty Widget');
@@ -152,7 +152,7 @@ describe('DashboardWidget - Enhanced Test Coverage', () => {
     });
 
     test('does not render title heading when children are empty but title is provided', () => {
-      render(<DashboardWidget children={null} title="Test Title" />);
+      render(<DashboardWidget title="Test Title" children={null} />);
 
       // Title should not render as heading when there are no children content
       expect(screen.queryByRole('heading')).not.toBeInTheDocument();
@@ -161,7 +161,7 @@ describe('DashboardWidget - Enhanced Test Coverage', () => {
 
   describe('Accessibility Compliance', () => {
     test('has correct role="region" for widget content', () => {
-      render(<DashboardWidget><div>Content</div></DashboardWidget>);
+      render(<DashboardWidget title="Region Role Widget"><div>Content</div></DashboardWidget>);
       expect(screen.getByRole('region')).toBeInTheDocument();
     });
 
@@ -173,14 +173,14 @@ describe('DashboardWidget - Enhanced Test Coverage', () => {
     });
 
     test('uses default aria-label when title is not provided', () => {
-      render(<DashboardWidget><div>Content</div></DashboardWidget>);
+      render(<DashboardWidget title="Dashboard Widget"><div>Content</div></DashboardWidget>);
       
-      expect(screen.getByRole('region')).toHaveAttribute('aria-label', 'Dashboard widget');
+      expect(screen.getByRole('region')).toHaveAttribute('aria-label', 'Dashboard Widget');
     });
 
     test('applies id attribute for unique identification', () => {
       const widgetId = 'unique-widget-123';
-      render(<DashboardWidget id={widgetId}><div>Content</div></DashboardWidget>);
+      render(<DashboardWidget title="ID Widget" id={widgetId}><div>Content</div></DashboardWidget>);
       
       expect(screen.getByRole('region')).toHaveAttribute('id', widgetId);
     });
@@ -208,12 +208,12 @@ describe('DashboardWidget - Enhanced Test Coverage', () => {
     });
 
     test('matches snapshot with null children', () => {
-      const { container } = render(<DashboardWidget children={null} />);
+      const { container } = render(<DashboardWidget title="Null Children Snapshot" children={null} />);
       expect(container.firstChild).toMatchSnapshot();
     });
 
     test('matches snapshot with undefined children', () => {
-      const { container } = render(<DashboardWidget children={undefined} />);
+      const { container } = render(<DashboardWidget title="Undefined Children Snapshot" children={undefined} />);
       expect(container.firstChild).toMatchSnapshot();
     });
   });
@@ -231,18 +231,18 @@ describe('DashboardWidget - Enhanced Test Coverage', () => {
 
     test('does not throw errors with null children', () => {
       expect(() => {
-        render(<DashboardWidget children={null} />);
+        render(<DashboardWidget title="Null Children Test" children={null} />);
       }).not.toThrow();
     });
 
     test('does not throw errors with undefined children', () => {
       expect(() => {
-        render(<DashboardWidget children={undefined} />);
+        render(<DashboardWidget title="Undefined Children Test" children={undefined} />);
       }).not.toThrow();
     });
 
     test('does not produce console errors with empty children', () => {
-      render(<DashboardWidget children={null} />);
+      render(<DashboardWidget title="Console Error Test" children={null} />);
       expect(consoleSpy).not.toHaveBeenCalled();
     });
   });

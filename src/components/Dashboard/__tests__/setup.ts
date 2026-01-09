@@ -1,11 +1,16 @@
-import '@testing-library/jest-dom';
+// src/components/Dashboard/__tests__/setup.ts
+import { vi } from 'vitest';
 
-beforeAll(() => {
-  jest.spyOn(console, 'error').mockImplementation(() => {});
-  jest.spyOn(console, 'warn').mockImplementation(() => {});
+export const mockPerformanceNow = vi.fn();
+
+Object.defineProperty(window, 'performance', {
+  value: { now: mockPerformanceNow },
+  writable: true,
 });
 
-afterAll(() => {
-  (console.error as jest.Mock).mockRestore();
-  (console.warn as jest.Mock).mockRestore();
-});
+// Global test configuration
+export const TEST_TIMING = {
+  INITIAL: 100,
+  INTERACTION: 200,
+  ANIMATION: 300
+};

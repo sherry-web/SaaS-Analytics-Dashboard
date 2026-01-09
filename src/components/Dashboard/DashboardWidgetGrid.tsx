@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 import type { ReactNode } from "react";
 import "./styles/Widgets.css";
 import "./styles/SaaSFinalPolish.css";
 
-interface DashboardWidgetGridProps {
+export interface DashboardWidgetGridProps {
   /** Number of columns in the grid */
   columns?: number;
-  /** Gap between grid items */
+  /** Gap between grid items (string like '1rem' or tokens 'sm'|'md'|'lg') */
   gap?: string;
   /** Children (widgets) */
   children: ReactNode;
@@ -14,29 +14,44 @@ interface DashboardWidgetGridProps {
   className?: string;
   /** Grid label for accessibility */
   ariaLabel?: string;
+  /** Optional entrance animation flag */
+  animateEntrance?: boolean;
 }
 
-/**
- * DashboardWidgetGrid component
- * Provides a responsive grid container for dashboard widgets
- * Uses CSS Grid with customizable columns and gap
- */
+/** Token -> actual gap mapping (supporting pages that pass 'lg', 'md', 'sm') */
+const gapMap: Record<string, string> = {
+  sm: "0.5rem",
+  md: "1rem",
+  lg: "1.5rem",
+};
+
 const DashboardWidgetGrid: React.FC<DashboardWidgetGridProps> = ({
   columns = 3,
   gap = "1.5rem",
   children,
   className = "",
   ariaLabel = "Dashboard widgets",
+  animateEntrance = false,
 }) => {
+  const resolvedGap = gapMap[gap] ?? gap;
+
   const style: React.CSSProperties = {
     display: "grid",
     gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
-    gap,
+    gap: resolvedGap,
   };
+
+  const containerClass = [
+    "dashboard-widget-grid",
+    animateEntrance ? "animate-entrance" : "",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <section
-      className={`dashboard-widget-grid ${className}`}
+      className={containerClass}
       style={style}
       role="group"
       aria-label={ariaLabel}
